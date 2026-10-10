@@ -1,0 +1,11 @@
+date,sku,product_name,quantity,unit_price
+2026-09-01,SKU-001,Wireless Mouse,5,599.00
+2026-09-02,SKU-001,Wireless Mouse,3,599.00
+2026-09-03,SKU-002,USB-C Cable,8,249.00
+2026-09-04,SKU-001,Wireless Mouse,4,599.00
+2026-09-05,SKU-003,Laptop Stand,2,899.00
+2026-09-06,SKU-002,USB-C Cable,6,249.00
+2026-09-07,SKU-001,Wireless Mouse,7,599.00
+2026-09-08,SKU-003,Laptop Stand,3,899.00
+2026-09-09,SKU-002,USB-C Cable,5,249.00
+2026-09-10,SKU-001,Wireless Mouse,4,599.00

@@ -1,0 +1,151 @@
+
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block title %}Overview · IntelliStock{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+  <div>
+    <p class="eyebrow mb-1">BUSINESS INTELLIGENCE</p>
+    <h1 class="h2 mb-1">Inventory overview</h1>
+    <p class="text-secondary mb-0">
+      A simple view of sales activity and stock health.
+    </p>
+  </div>
+  <a class="btn btn-primary" href="#upload">Import sales CSV</a>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3">
+    <div class="metric">
+      <div class="metric-label">Revenue this month</div>
+      <div class="metric-value">₹{{ revenue|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="metric">
+      <div class="metric-label">Units sold this month</div>
+      <div class="metric-value">{{ units }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="metric">
+      <div class="metric-label">Products tracked</div>
+      <div class="metric-value">{{ product_count }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="metric">
+      <div class="metric-label">Low-stock products</div>
+      <div class="metric-value {% if low_stock %}text-danger{% endif %}">
+        {{ low_stock }}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <section class="panel h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h5 mb-1">Daily units sold</h2>
+          <p class="text-secondary small mb-0">
+            Last 30 days with recorded sales
+          </p>
+        </div>
+      </div>
+      <canvas
+        id="salesChart"
+        height="120"
+        data-chart="{{ chart|escapejs }}"
+      ></canvas
+      >{% if not chart.labels %}
+      <p class="text-secondary small mt-3">
+        No recent sales yet. Import the sample CSV to populate this chart.
+      </p>
+      {% endif %}
+    </section>
+  </div>
+  <div class="col-lg-4">
+    <section class="panel h-100">
+      <h2 class="h5">Top categories</h2>
+      {% for item in category_rows %}
+      <div class="d-flex justify-content-between border-bottom py-2">
+        <span>{{ item.product__category }}</span
+        ><strong>{{ item.units }}</strong>
+      </div>
+      {% empty %}
+      <p class="text-secondary small">
+        Category insights will appear after importing sales.
+      </p>
+      {% endfor %}<a
+        class="btn btn-outline-primary btn-sm mt-3"
+        href="{% url 'forecast' %}"
+        >Explore forecasts</a
+      >
+    </section>
+  </div>
+</div>
+<div class="row g-4 mt-1">
+  <div class="col-lg-7">
+    <section class="panel">
+      <h2 class="h5 mb-3">Recent sales</h2>
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sale in recent_sales %}
+            <tr>
+              <td>{{ sale.date }}</td>
+              <td>{{ sale.product.name }}</td>
+              <td>{{ sale.quantity }}</td>
+              <td>₹{{ sale.revenue|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-secondary">No sales data yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <div class="col-lg-5">
+    <section class="panel" id="upload">
+      <h2 class="h5">Import sales CSV</h2>
+      <p class="small text-secondary">
+        Required columns:
+        <code>date, sku, product_name, quantity, unit_price</code>. Maximum 5
+        MB. Date format: YYYY-MM-DD.
+      </p>
+      <form
+        method="post"
+        action="{% url 'upload_sales' %}"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}<input
+          class="form-control mb-3"
+          type="file"
+          name="file"
+          accept=".csv,text/csv"
+          required
+        /><button class="btn btn-primary">Validate and import</button>
+      </form>
+      <a
+        class="small d-inline-block mt-3"
+        href="{% static 'inventory/sample_sales.csv' %}"
+        download
+        >Download sample CSV</a
+      >
+    </section>
+  </div>
+</div>
+{% endblock %}

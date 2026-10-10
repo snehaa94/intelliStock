@@ -1,0 +1,35 @@
+{% extends 'inventory/base.html' %}{% block title %}AI Assistant ·
+IntelliStock{% endblock %}{% block content %}
+<div class="mb-4">
+  <p class="eyebrow">ASK YOUR DATA</p>
+  <h1 class="h2">Inventory assistant</h1>
+  <p class="text-secondary">
+    Ask about stock health or recent sales. The assistant only receives a small
+    set of aggregate inventory facts.
+  </p>
+</div>
+<section class="panel chat-panel">
+  <div id="chatLog" class="chat-log" aria-live="polite">
+    <div class="chat-bubble assistant">
+      Hi! Ask me which products are low on stock or how many units sold in the
+      last 30 days. Configure a Groq API key for generative responses;
+      otherwise, a rule-based fallback is used.
+    </div>
+  </div>
+  <form id="assistantForm" data-endpoint="{% url 'assistant_api' %}">
+    {% csrf_token %}<label for="question" class="form-label"
+      >Your question</label
+    >
+    <div class="input-group">
+      <input
+        id="question"
+        class="form-control"
+        maxlength="1000"
+        placeholder="Which products need restocking?"
+        required
+      /><button class="btn btn-primary">Ask</button>
+    </div>
+    <div id="assistantStatus" class="small text-secondary mt-2"></div>
+  </form>
+</section>
+{% endblock %}
